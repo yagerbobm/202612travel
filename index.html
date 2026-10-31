@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>2026 台灣環島10日遊｜專屬行程表</title>
+  <meta name="theme-color" content="#0f766e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="環島10日遊">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <style>
+    :root {
+      --primary: #0f766e;
+      --primary-light: #14b8a6;
+      --primary-bg: #f0fdfa;
+      --accent: #d97706;
+      --accent-bg: #fffbeb;
+      --rain: #2563eb;
+      --rain-bg: #eff6ff;
+      --food: #e11d48;
+      --food-bg: #fff1f2;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --card-bg: #ffffff;
+      --bg: #f8fafc;
+      --border: #e2e8f0;
+      --font-scale: 1;
+    }
+    
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      font-size: calc(16px * var(--font-scale));
+      line-height: 1.6;
+      padding-bottom: 90px;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+      color: white;
+      padding: 20px 16px 14px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(15, 118, 110, 0.18);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .app-title {
+      margin: 0;
+      font-size: calc(1.25rem * var(--font-scale));
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .app-subtitle {
+      margin: 2px 0 0;
+      font-size: calc(0.85rem * var(--font-scale));
+      opacity: 0.9;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-icon {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-icon.active {
+      background: #ffffff;
+      color: var(--primary);
+    }
+
+    /* Weather Mode Switcher */
+    .mode-bar {
+      display: flex;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 12px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.85);
+      padding: 8px 4px;
+      font-size: calc(0.9rem * var(--font-scale));
+      font-weight: 600;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    /* Day Selector Horizontal Scroll */
+    .day-tabs {
+      display: flex;
+      overflow-x: auto;
+      gap: 8px;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .day-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .day-tab {
+      flex: 0 0 auto;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-width: 78px;
+    }
+
+    .day-tab.active {
+      background: #ffffff;
+      color: var(--primary);
+      border-color: #ffffff;
+      font-weight: 700;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .day-tab .d-num {
+      font-size: calc(0.95rem * var(--font-scale));
+      display: block;
+    }
+
+    .day-tab .d-loc {
+      font-size: calc(0.75rem * var(--font-scale));
+      opacity: 0.9;
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* Container */
+    .container {
+      max-width: 768px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* Day Summary Banner */
+    .day-banner {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border-left: 6px solid var(--primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .day-banner h2 {
+      margin: 0 0 6px 0;
+      font-size: calc(1.3rem * var(--font-scale));
+      color: var(--primary);
+    }
+
+    .day-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: calc(0.85rem * var(--font-scale));
+      font-weight: 600;
+    }
+
+    .badge-train {
+      background: #f0fdf4;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .badge-hotel {
+      background: #faf5ff;
+      color: #7e22ce;
+      border: 1px solid #e9d5ff;
+    }
+
+    .badge-star {
+      background: var(--accent-bg);
+      color: var(--accent);
+      border: 1px solid #fde68a;
+    }
+
+    /* Timeline Cards */
+    .timeline {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .slot-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      border: 1px solid var(--border);
+      transition: transform 0.15s;
+    }
+
+    .slot-card.checked {
+      opacity: 0.65;
+      background: #f1f5f9;
+    }
+
+    .slot-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .time-pill {
+      background: var(--primary-bg);
+      color: var(--primary);
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: calc(0.95rem * var(--font-scale));
+      letter-spacing: 0.3px;
+      border: 1px solid #99f6e4;
+    }
+
+    .check-btn {
+      background: none;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: calc(0.8rem * var(--font-scale));
+      color: var(--text-muted);
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .slot-card.checked .check-btn {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    .slot-title {
+      font-size: calc(1.15rem * var(--font-scale));
+      font-weight: 700;
+      margin: 6px 0 8px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag-new {
+      background: #fef3c7;
+      color: #b45309;
+      font-size: calc(0.75rem * var(--font-scale));
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+
+    .tag-food {
+      background: var(--food-bg);
+      color: var(--food);
+      font-size: calc(0.75rem * var(--font-scale));
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+
+    .sunny-box {
+      background: #ffffff;
+      padding: 4px 0;
+      color: #334155;
+    }
+
+    .rain-box {
+      margin-top: 12px;
+      background: var(--rain-bg);
+      border-left: 4px solid var(--rain);
+      padding: 10px 12px;
+      border-radius: 0 10px 10px 0;
+      font-size: calc(0.92rem * var(--font-scale));
+      color: #1e40af;
+    }
+
+    .rain-box strong {
+      display: block;
+      margin-bottom: 2px;
+      color: #1d4ed8;
+    }
+
+    .slot-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .map-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      background: #f8fafc;
+      color: #0f766e;
+      border: 1px solid #cbd5e1;
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: calc(0.85rem * var(--font-scale));
+      font-weight: 600;
+    }
+
+    .map-link:active {
+      background: #e2e8f0;
+    }
+
+    /* Info & Checklist View */
+    .info-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      border: 1px solid var(--border);
+    }
+
+    .info-card h3 {
+      margin-top: 0;
+      color: var(--primary);
+      font-size: calc(1.15rem * var(--font-scale));
+      border-bottom: 2px solid var(--primary-bg);
+      padding-bottom: 8px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9;
+      cursor: pointer;
+    }
+
+    .checklist-item input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      accent-color: var(--primary);
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+      z-index: 100;
+    }
+
+    .nav-item {
+      flex: 1;
+      border: none;
+      background: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-muted);
+      font-size: calc(0.8rem * var(--font-scale));
+      font-weight: 600;
+      cursor: pointer;
+      padding: 6px 0;
+    }
+
+    .nav-item.active {
+      color: var(--primary);
+    }
+
+    .nav-icon {
+      font-size: 1.3rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Food cards (horizontal swipe) */
+    .food-hint {
+      font-size: calc(0.82rem * var(--font-scale));
+      color: var(--text-muted);
+      margin: 4px 0 8px;
+      font-weight: 600;
+    }
+    .slot-note {
+      background: #f8fafc;
+      border-left: 4px solid var(--primary-light);
+      padding: 8px 12px;
+      border-radius: 0 10px 10px 0;
+      font-size: calc(0.92rem * var(--font-scale));
+      color: #334155;
+      margin: 4px 0 8px;
+    }
+    .food-scroll {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding: 4px 2px 12px;
+      margin: 0 -4px;
+      scrollbar-width: thin;
+    }
+    .food-card {
+      flex: 0 0 76%;
+      max-width: 290px;
+      scroll-snap-align: start;
+      background: var(--food-bg);
+      border: 1px solid #fecdd3;
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .food-tag {
+      align-self: flex-start;
+      background: #ffffff;
+      color: var(--food);
+      border: 1px solid #fecdd3;
+      font-size: calc(0.72rem * var(--font-scale));
+      font-weight: 700;
+      padding: 1px 8px;
+      border-radius: 6px;
+    }
+    .food-name {
+      font-size: calc(1.08rem * var(--font-scale));
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.35;
+    }
+    .food-desc {
+      font-size: calc(0.9rem * var(--font-scale));
+      color: #475569;
+      flex: 1;
+    }
+    .food-hours {
+      font-size: calc(0.82rem * var(--font-scale));
+      color: #9f1239;
+      font-weight: 600;
+    }
+    .food-map {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      text-decoration: none;
+      background: #ffffff;
+      color: #0f766e;
+      border: 1px solid #cbd5e1;
+      padding: 6px 10px;
+      border-radius: 10px;
+      font-size: calc(0.85rem * var(--font-scale));
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .food-map:active { background: #e2e8f0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div>
+      <h1 class="app-title">🚂 2026 台灣環島10日遊</h1>
+      <p class="app-subtitle">12/10(四) – 12/19(六)｜台中出發・逆時針慢遊</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-icon" id="fontBtn" onclick="toggleFontSize()" title="切換字體大小">
+        🔍 大字版
+      </button>
+    </div>
+  </div>
+
+  <div id="itineraryControls">
+    <div class="mode-bar">
+      <button class="mode-btn active" onclick="setWeatherMode('all')" id="mode-all">🌤️ 晴雨對照</button>
+      <button class="mode-btn" onclick="setWeatherMode('sunny')" id="mode-sunny">☀️ 晴天主線</button>
+      <button class="mode-btn" onclick="setWeatherMode('rain')" id="mode-rain">☔ 雨備方案</button>
+    </div>
+
+    <div class="day-tabs" id="dayTabs"></div>
+  </div>
+</header>
+
+<main class="container">
+  <!-- View 1: Daily Itinerary -->
+  <section id="view-itinerary">
+    <div id="dayContent"></div>
+  </section>
+
+  <!-- View 2: Overview Table & Status -->
+  <section id="view-status" class="hidden">
+    <div class="info-card">
+      <h3>📌 2026年12月 景點現況實查與官方連結</h3>
+      <p style="font-size:0.9rem;color:#475569;">以下景點皆已確認最新開放時間與休館日，點選可開啟官方網站：</p>
+      <ul style="padding-left:20px;line-height:1.9;">
+        <li><strong>故宮南院（嘉義）</strong>：週二至五 09:00–17:00，週一休館（12/10週四正常）。<a href="https://tw.trip.com/moments/theme/poi-southern-branch-of-the-national-palace-museum-24239609-guides-993135/" target="_blank">參考連結</a></li>
+        <li><strong>奇美博物館（台南）</strong>：09:30–17:30，週三休館（12/11週五正常）。<a href="https://touringtw.com/chimei-museum-tickets/chimei-museum/" target="_blank">參考連結</a></li>
+        <li><strong>衛武營國家藝術文化中心（高雄）</strong>：室內外正常開放。<a href="https://par.npac-ntch.org/tw/article/doc/HIAH6F6R6K" target="_blank">參考連結</a></li>
+        <li><strong>知本森林遊樂區＆史前博物館（台東）</strong>：森林遊樂區07:30–17:00；史前館週日正常開放。<a href="https://www.nmp.gov.tw/cp.aspx?n=2010" target="_blank">史前館官網</a></li>
+        <li><strong>池上伯朗大道（台東）</strong>：全天開放，建議租電動四輪遮雨車。<a href="https://travelstay.org/2026/05/29/taitung-chishang-day-trip-2026/" target="_blank">參考連結</a></li>
+        <li><strong>花蓮太魯閣避雷提醒</strong>：砂卡礑、九曲洞、燕子口、白楊步道等仍封閉整修中，本行程已全面改為安全的慶修院、松園別館與七星潭。<a href="https://www.hualien-best.com.tw/guide-taroko.html" target="_blank">現況查證</a></li>
+        <li><strong>宜蘭傳藝中心（宜蘭）</strong>：每日 09:00–18:00 開放，全程有紅磚騎樓遮雨。<a href="https://www.px-sunmake.org.tw/" target="_blank">傳藝官網</a></li>
+        <li><strong>大溪老茶廠＆木博館（桃園）</strong>：老茶廠 09:30–17:00（11:00/14:30導覽）；木博館週五正常開放。<a href="https://dbom.tycg.gov.tw/" target="_blank">木博館官網</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- View 3: Prep & Packing List -->
+  <section id="view-prep" class="hidden">
+    <div class="info-card">
+      <h3>🎫 台鐵訂票與租車重要提醒</h3>
+      <p><strong>📅 台鐵開放訂票日：</strong>乘車日前 28 天凌晨 00:00 開放（12/10 出發之車票於 <strong>11月12日</strong> 起陸續開放預訂）。</p>
+      <p><strong>🚄 重點必搶路段（建議訂 EMU3000 新自強號）：</strong></p>
+      <ul>
+        <li>Day 4 (12/13 週日)：高雄 ➔ 知本（08:40 發車區間，靠海側看南迴海景）</li>
+        <li>Day 6 (12/15 週二)：池上 ➔ 花蓮（09:00 發車區間）</li>
+        <li>Day 7 (12/16 週三)：花蓮 ➔ 羅東（08:50 發車區間）</li>
+      </ul>
+      <p><strong>🛵 站前租機車必備：</strong>雙人皆請攜帶「身分證＋普通重型機車駕照」。</p>
+    </div>
+
+    <div class="info-card">
+      <h3>🧳 55歲夫妻 12月環島行李檢查表（點擊可打勾）</h3>
+      <div id="packingList"></div>
+    </div>
+
+    <div class="info-card">
+      <h3>📲 如何把這個行程放到手機桌面？</h3>
+      <ol style="padding-left:20px;line-height:1.8;">
+        <li><strong>直接打開：</strong>把這個 <code>環島10日遊_PWA.html</code> 傳到家人的 LINE，點開選擇「以預設瀏覽器開啟（Safari 或 Chrome）」。</li>
+        <li><strong>iPhone (Safari)：</strong>點選下方中間的「分享」圖示 ➔ 往下滑點選<strong>「加入主畫面」</strong>。</li>
+        <li><strong>Android (Chrome)：</strong>點選右上角「三個點」選單 ➔ 點選<strong>「加到主畫面」或「安裝應用程式」</strong>。</li>
+        <li>完成後，手機桌面就會出現「環島10日遊」專屬圖示，沒網路也能隨時打開看行程！</li>
+      </ol>
+    </div>
+  </section>
+</main>
+
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="switchView('itinerary')" id="nav-itinerary">
+    <span class="nav-icon">🗓️</span>
+    <span>每日行程</span>
+  </button>
+  <button class="nav-item" onclick="switchView('status')" id="nav-status">
+    <span class="nav-icon">🏛️</span>
+    <span>景點實查</span>
+  </button>
+  <button class="nav-item" onclick="switchView('prep')" id="nav-prep">
+    <span class="nav-icon">🎒</span>
+    <span>行前準備</span>
+  </button>
+</nav>
+
+<script>
+const itineraryData = [
+  {
+    day: 1,
+    date: "12/10 (四)",
+    city: "台中 ➔ 嘉義",
+    theme: "木都古蹟與湖畔夕陽",
+    transport: "台鐵自強號 ＋ 嘉義前站租機車",
+    hotel: "嘉義市區（近文化路或火車站）",
+    newSpot: "嘉義市立美術館、沉睡森林＆北門驛",
+    slots: [
+      {
+        time: "08:30–09:50",
+        title: "台鐵移動：台中站 ➔ 嘉義站",
+        sunny: "搭乘台鐵自強號（約75分鐘車程），在火車上悠閒享用早餐，開啟環島第一天。",
+        rain: "正常搭乘台鐵。",
+        map: "嘉義火車站"
+      },
+      {
+        time: "09:50–10:30",
+        title: "嘉義前站租機車 ＆ 寄放行李",
+        sunny: "出站步行2分鐘辦妥租機車手續（備妥身分證＋駕照），騎車5分鐘至飯店寄放行李。",
+        rain: "若下大雨，將行李寄放車站置物櫃，改搭計程車或BRT移動。",
+        map: "嘉義火車站租機車"
+      },
+      {
+        time: "10:30–12:00",
+        title: "嘉義市立美術館",
+        isNew: true,
+        sunny: "距離火車站騎車僅3分鐘。欣賞1936年昭和時期菸酒公賣局古蹟磚牆與挑高木構建築，館內有「昭和J11咖啡館」可歇腳拍照。",
+        rain: "本身即為頂級室內美術館，雨天完全不受影響。",
+        map: "嘉義市立美術館"
+      },
+      {
+        time: "12:00–13:30",
+        title: "午餐：民主火雞肉飯（民族路）",
+        isFood: true,
+        sunny: "騎車8分鐘抵達。比夜市店面寬敞、附設專用停車場，必點火雞肉片飯、蔥油淋醬、滷大腸與骨仔肉湯。",
+        rain: "室內冷氣餐廳，照常享用。",
+        map: "嘉義民主火雞肉飯"
+      },
+      {
+        time: "13:30–15:30",
+        title: "檜意森活村 ＆ 沉睡森林公園・北門驛",
+        isNew: true,
+        sunny: "騎車5分鐘抵達。漫步全台最大日式官舍群，順遊緊鄰在旁的「沉睡森林（白熊與企鵝雕像）」與百年木造「北門驛」。",
+        rain: "改由嘉義火車站後站搭乘BRT接駁車，前往【國立故宮博物院南部院區】（週四開放至17:00）。",
+        map: "檜意森活村"
+      },
+      {
+        time: "15:30–16:15",
+        title: "阿里山森林鐵路車庫園區",
+        sunny: "距離檜意森活村步行僅3分鐘。在樹蔭下近距離觀賞退役蒸汽火車頭、檜木車廂與轉車台。",
+        rain: "繼續停留於【故宮南院】欣賞翠玉白菜與亞洲織品展，並於館內茶屋喝下午茶。",
+        map: "阿里山森林鐵路車庫園區"
+      },
+      {
+        time: "16:15–17:40",
+        title: "蘭潭風景區（月影潭心）",
+        sunny: "騎車15分鐘至蘭潭。沿著平緩湖濱步道散步吹風，17:15太陽下山時欣賞湖面夕陽與月影潭心夜間燈光。",
+        rain: "改逛嘉義市區室內的【台灣花磚博物館】（林森西路，距離火車站騎車3分鐘）。",
+        map: "蘭潭月影潭心"
+      },
+      {
+        time: "17:40–19:30",
+        title: "晚餐：林聰明沙鍋魚頭（中正總店）",
+        isFood: true,
+        sunny: "建議16:30先透過官方LINE線上抽號碼牌，騎車回市區剛好入座。享用沙鍋菜配太陽蛋、冬菜蝦仁蛋湯。飯後買御香屋葡萄柚綠茶。",
+        rain: "照常前往用餐（室內古宅座位）。",
+        map: "林聰明沙鍋魚頭"
+      }
+    ]
+  },
+  {
+    day: 2,
+    date: "12/11 (五)",
+    city: "嘉義 ➔ 台南",
+    theme: "歐式宮殿與安平古堡巡禮",
+    transport: "台鐵區間快/自強 ＋ 台南站租機車",
+    hotel: "台南中西區",
+    newSpot: "安平古堡、臺南市美術館2館夜景",
+    slots: [
+      {
+        time: "08:30–10:15",
+        title: "嘉義還車 ➔ 台鐵至台南站租車",
+        sunny: "08:30還機車，搭乘台鐵（約42分鐘）抵達台南火車站。出站租機車，騎車8分鐘至中西區飯店寄放行李。",
+        rain: "若下雨，直接由台南火車站轉搭台鐵沙崙線至「保安站」，步行前往奇美博物館。",
+        map: "台南火車站"
+      },
+      {
+        time: "10:15–12:45",
+        title: "奇美博物館（戶外花園＋常設展）",
+        sunny: "騎車約20分鐘抵達。先在阿波羅噴泉與奧林匹斯橋拍合照，11:00進入室內看兵器廳、樂器廳（11:30有自動樂器演奏）。",
+        rain: "本身即為大型室內博物館，可延長停留時間至下午。",
+        map: "奇美博物館"
+      },
+      {
+        time: "12:45–14:30",
+        title: "午餐：阿霞飯店（忠義路本館）",
+        isFood: true,
+        sunny: "騎車20分鐘回中西區（需提前訂位）。免去街頭排隊流汗，在舒適冷氣房品嚐紅蟳米糕、炒鱔魚與經典甜湯。",
+        rain: "室內老字號餐廳，照常享用。",
+        map: "台南阿霞飯店"
+      },
+      {
+        time: "14:30–16:00",
+        title: "四草綠色隧道（台江國家公園）",
+        sunny: "騎車約20分鐘至四草大眾廟。搭乘約30分鐘的觀光竹筏（附斗笠），穿梭紅樹林水上綠色隧道。",
+        rain: "改逛中西區室內的【司法博物館】（原台南地方法院，巴洛克圓頂極美，免費參觀）。",
+        map: "四草綠色隧道"
+      },
+      {
+        time: "16:00–17:45",
+        title: "安平樹屋 ＆ 安平古堡",
+        isNew: true,
+        sunny: "騎車8分鐘回安平核心區。先看榕樹盤根錯節的德記洋行與安平樹屋，接著步行5分鐘進入【安平古堡】，登上瞭望台看安平夕陽。",
+        rain: "改逛百年古蹟百貨【林百貨】（五棧樓頂樓有神社鳥居與伴手禮）。",
+        map: "安平古堡"
+      },
+      {
+        time: "17:45–19:15",
+        title: "晚餐：文章牛肉湯（安平總店）",
+        isFood: true,
+        sunny: "騎車3分鐘即達安平路大店面。點選溫體招牌牛肉湯、蔥爆牛腩與牛肉燥飯，座位寬敞免久候。",
+        rain: "室內餐廳，照常享用。",
+        map: "文章牛肉湯安平"
+      },
+      {
+        time: "19:15–20:30",
+        title: "臺南市美術館2館（夜間光影）",
+        isNew: true,
+        sunny: "騎車10分鐘回中西區。夜間的南美館2館在燈光投射下宛如純白幾何水晶，散步拍夜景後回飯店休息。",
+        rain: "於美術館廊道賞景，或直接回飯店泡澡休息。",
+        map: "臺南市美術館2館"
+      }
+    ]
+  },
+  {
+    day: 3,
+    date: "12/12 (六)",
+    city: "台南 ➔ 高雄",
+    theme: "港灣夕陽、渡輪與流行音樂中心",
+    transport: "台鐵自強號 ＋ 高雄租機車/輕軌",
+    hotel: "高雄鹽埕區或市議會站周邊",
+    newSpot: "打狗英國領事館文化園區（西子灣海景下午茶）",
+    slots: [
+      {
+        time: "09:00–10:30",
+        title: "台南還車 ➔ 台鐵至高雄站租車",
+        sunny: "搭乘台鐵自強號（約35分鐘）抵達高雄火車站，出站租機車並前往鹽埕區飯店寄放行李。",
+        rain: "高雄段若下雨可不租機車，全天改搭「高雄捷運＋輕軌」。",
+        map: "高雄火車站"
+      },
+      {
+        time: "10:30–12:15",
+        title: "駁二藝術特區 ＆ 大港橋",
+        sunny: "騎車10分鐘至鹽埕埔。漫步駁二大勇倉庫群、看純白旋轉大港橋，逛大港倉室內文創小店。",
+        rain: "改搭捷運橘線直達【衛武營國家藝術文化中心】參觀室內建築與展覽。",
+        map: "駁二藝術特區大港橋"
+      },
+      {
+        time: "12:15–14:30",
+        title: "棧貳庫搭渡輪 ➔ 旗津老街海產午餐",
+        isFood: true,
+        sunny: "從棧貳庫或鼓山輪渡站連人帶機車搭渡輪（航程約10分鐘）至旗津。於「鴨角活海產」或「萬二小吃部」大啖烤小卷、生魚片與海瓜子，順遊旗津彩虹教堂。",
+        rain: "留在本島棧貳庫室內商場用餐，看著雨中海景吃飯。",
+        map: "旗津輪渡站"
+      },
+      {
+        time: "14:30–16:30",
+        title: "打狗英國領事館文化園區",
+        isNew: true,
+        sunny: "搭渡輪回鼓山，騎車5分鐘上哨船頭小山丘。參觀1879年紅磚洋樓古蹟，在「古典玫瑰園」室內拱廊座位喝英式下午茶，俯瞰西子灣大船入港。",
+        rain: "領事館有室內展館與古典玫瑰園午茶座位；若豪雨則改去【高雄市立美術館】。",
+        map: "打狗英國領事館文化園區"
+      },
+      {
+        time: "16:30–18:00",
+        title: "飯店 Check-in 與午間小憩",
+        sunny: "騎車10分鐘回鹽埕區飯店辦理入住，在房內泡杯茶、抬腿休息1小時。",
+        rain: "飯店內休息。",
+        map: "高雄鹽埕區"
+      },
+      {
+        time: "18:00–19:45",
+        title: "晚餐：老新台菜（九如創始店）",
+        isFood: true,
+        sunny: "騎車15分鐘前往（需預約）。復古十全十美裝潢，主廚依當日食材配無菜單台菜，芋頭西米露與櫻花蝦米糕極受喜愛。",
+        rain: "室內高級台菜餐廳，照常享用。",
+        map: "老新台菜九如創始店"
+      },
+      {
+        time: "19:45–21:15",
+        title: "愛河灣 ＆ 高雄流行音樂中心夜景",
+        sunny: "騎車回真愛碼頭。沿著平緩木棧道散步，欣賞高流中心「音浪塔」與珊瑚礁群的六角形燈光倒影。",
+        rain: "改搭輕軌C11真愛碼頭站繞行愛河灣一圈，在車廂內看夜景。",
+        map: "高雄流行音樂中心"
+      }
+    ]
+  },
+  {
+    day: 4,
+    date: "12/13 (日)",
+    city: "高雄 ➔ 台東知本",
+    theme: "南迴藍海、櫻木平交道與溫泉森林浴",
+    transport: "台鐵南迴線 EMU3000 ＋ 知本站租機車",
+    hotel: "知本溫泉區（泡湯舒緩疲勞）",
+    newSpot: "太麻里平交道、鐵花新聚落（週日微光集）",
+    slots: [
+      {
+        time: "08:40–11:30",
+        title: "台鐵南迴線：高雄 ➔ 知本站租車",
+        sunny: "搭乘 EMU3000 新自強號（約2小時15分）直達知本車站，沿途飽覽台灣海峽轉換至太平洋海景。於知本站前租機車。",
+        rain: "正常搭乘台鐵，知本站轉搭計程車或飯店接駁。",
+        map: "知本火車站"
+      },
+      {
+        time: "11:30–12:30",
+        title: "太麻里平交道（台版櫻木花道）",
+        isNew: true,
+        sunny: "從知本站沿台9線往南騎約15分鐘。站在平交道小斜坡上，背後就是無敵湛藍太平洋與藍天。",
+        rain: "改搭火車或計程車前往康樂站旁的【國立臺灣史前文化博物館】（週日09:00–17:00正常開放）。",
+        map: "太麻里平交道"
+      },
+      {
+        time: "12:30–13:40",
+        title: "午餐：太麻里湘琪牛肉麵 或 海產",
+        isFood: true,
+        sunny: "位於台9線旁，在地人激推的濃郁紅燒牛肉麵與滷味拼盤；或至金崙品嚐在地料理。",
+        rain: "於史前文化博物館周邊或知本市區「黑松羊肉爐」用午餐。",
+        map: "太麻里湘琪牛肉麵"
+      },
+      {
+        time: "13:40–15:00",
+        title: "多良車站（最美海景車站）",
+        sunny: "繼續往南騎約15分鐘抵達。步行3分鐘上緩坡觀景台，喝杯部落小米冰沙，看火車從紅欄杆與太平洋之間呼嘯而過。",
+        rain: "繼續在【史前文化博物館】參觀全新改裝的南島文化展廳與台灣自然史展廳。",
+        map: "多良觀光車站"
+      },
+      {
+        time: "15:00–17:00",
+        title: "知本國家森林遊樂區",
+        sunny: "折返往北騎車約35分鐘進入知本溫泉區底端。走平緩的「景觀步道」，參觀榮獲建築獎的「虎比公寓」，在百年大白榕下森呼吸。",
+        rain: "提早於15:30辦理知本溫泉飯店入住，使用室內美人湯屋與休憩設施。",
+        map: "知本國家森林遊樂區"
+      },
+      {
+        time: "18:30–21:00",
+        title: "溫泉晚宴 或 鐵花新聚落（微光集）",
+        isNew: true,
+        isFood: true,
+        sunny: "方案A：騎車20分鐘至台東市區吃榕樹下米苔目，漫步【鐵花新聚落】（週日17:00–22:00微光集市集與原住民駐唱）。方案B：留在知本溫泉飯店享用自助晚餐並泡湯。",
+        rain: "直接選擇方案B，留在知本溫泉飯店內享用自助百匯與室內溫泉池。",
+        map: "台東鐵花新聚落"
+      }
+    ]
+  },
+  {
+    day: 5,
+    date: "12/14 (一)",
+    city: "知本 ➔ 台東池上",
+    theme: "縱谷茶園、米國學校與黃金稻浪",
+    transport: "台鐵北上 ＋ 池上電動四輪遮雨車",
+    hotel: "池上鄉或瑞穗溫泉區",
+    newSpot: "鹿野高台大草原、關山米國學校",
+    slots: [
+      {
+        time: "08:45–10:15",
+        title: "知本還車 ➔ 台鐵至池上站租車",
+        sunny: "搭乘台鐵北上列車（約55分鐘）抵達木造拱頂的池上火車站，於站前租車並寄放行李。",
+        rain: "正常搭乘台鐵。",
+        map: "池上火車站"
+      },
+      {
+        time: "10:15–11:40",
+        title: "關山米國學校 ＆ 鹿野高台",
+        isNew: true,
+        sunny: "從池上沿台9線往南騎約15分鐘至【關山米國學校】（免費參觀製米過程、買米乖乖），體力好可再順遊【鹿野高台】俯瞰縱谷茶園。",
+        rain: "關山米國學校為室內農會展售與體驗空間，雨天可在此品嚐關山米冰淇淋與採買伴手禮。",
+        map: "關山米國學校"
+      },
+      {
+        time: "11:40–14:00",
+        title: "午餐：悟饕池上飯包故事館 ＆ 大池豆皮店",
+        isFood: true,
+        sunny: "在復古藍色火車廂內享用正宗木盒池上便當，餐後騎車5分鐘至「大池豆皮店」品嚐柴燒手工香煎豆包與微甜豆漿。",
+        rain: "故事館與豆皮店皆有室內座位，照常享用。",
+        map: "悟饕池上飯包文化故事館"
+      },
+      {
+        time: "14:00–16:30",
+        title: "池上伯朗大道 ＆ 天堂路（電動四輪車）",
+        sunny: "強烈建議在車站旁換租「電動四輪遮雨篷車」（兩人共乘一台，像開高爾夫球車一樣輕鬆）。慢遊金城武樹、天堂路S彎道與蔡依林樹。",
+        rain: "電動四輪車配有車頂篷與透明防風雨簾，微雨完全淋不到；大雨則改至「池上蔣勳書房」或民宿喝下午茶。",
+        map: "池上伯朗大道"
+      },
+      {
+        time: "16:30–17:40",
+        title: "大坡池風景區環湖散步",
+        sunny: "騎電動車順遊大坡池，在平緩湖畔木棧道看海岸山脈倒影與水鳥。",
+        rain: "提早回池上特色民宿休息。",
+        map: "池上大坡池"
+      },
+      {
+        time: "17:40–19:30",
+        title: "晚餐：舒食男孩二號店 或 吉本肉圓",
+        isFood: true,
+        sunny: "「舒食男孩」提供精緻無負擔的台東旬味蔬食套餐（需預約，長輩評價極高）；或品嚐在地清蒸肉圓與四神湯。",
+        rain: "室內餐廳，照常享用。",
+        map: "池上舒食男孩"
+      }
+    ]
+  },
+  {
+    day: 6,
+    date: "12/15 (二)",
+    city: "池上 ➔ 花蓮市區",
+    theme: "日式寺院、海景松林與鐵道園區",
+    transport: "台鐵自強號 ＋ 花蓮前站租機車",
+    hotel: "花蓮市區飯店",
+    newSpot: "花蓮鐵道文化園區、太平洋公園",
+    slots: [
+      {
+        time: "09:00–10:30",
+        title: "台鐵移動：池上站 ➔ 花蓮站租車",
+        sunny: "搭乘台鐵自強號（約1小時25分）沿花東縱谷北上抵達花蓮車站，於前站租機車並寄放行李。（避開整修中的太魯閣，全程走平原安全路線）",
+        rain: "正常搭乘台鐵。",
+        map: "花蓮火車站"
+      },
+      {
+        time: "10:30–12:00",
+        title: "吉安慶修院（三級古蹟）",
+        sunny: "騎車約15分鐘抵達吉安鄉。參觀台灣保存最完整的日治時期真言宗寺院，手水舍、八十八尊石佛與枯山水庭院極為清幽好拍。",
+        rain: "改逛室內的【花蓮文化創意產業園區】（百年日式酒廠改建展館群）。",
+        map: "吉安慶修院"
+      },
+      {
+        time: "12:00–14:00",
+        title: "午餐：櫻之田野養生野菜鍋 或 月廬食堂",
+        isFood: true,
+        sunny: "騎車8分鐘至吉安「櫻之田野」，享用九品蓮花養生火鍋與野菜吃到飽；或提前預約鳳林「月廬食堂」吃炭烤梅子雞。",
+        rain: "室內寬敞餐廳，照常享用。",
+        map: "花蓮櫻之田野休閒養生館"
+      },
+      {
+        time: "14:00–15:30",
+        title: "松園別館（美崙山看海）",
+        sunny: "騎車15分鐘回花蓮市美崙山。漫步百年老松樹林與日治時期軍事官邸，在2樓拱廊點杯咖啡，遠眺花蓮港與太平洋。",
+        rain: "改逛美崙海濱的【花蓮縣石雕博物館】（週二09:00–17:00正常開放）。",
+        map: "花蓮松園別館"
+      },
+      {
+        time: "15:30–17:00",
+        title: "七星潭海岸風景特定區",
+        sunny: "騎車12分鐘抵達。在月牙灣鵝卵石海灘聽浪濤聲、看清水斷崖遠景，不用走山路就能飽覽東海岸壯闊山海。",
+        rain: "改去七星潭旁的室內場館【七星柴魚博物館】，體驗刨柴魚花與品嚐章魚燒。",
+        map: "花蓮七星潭"
+      },
+      {
+        time: "17:00–18:15",
+        title: "花蓮鐵道文化園區 ＆ 太平洋公園",
+        isNew: true,
+        sunny: "騎車12分鐘回花蓮市中心。參觀【花蓮鐵道文化園區】（週二開放至18:00，舊東線鐵道部古蹟），傍晚順遊緊鄰的【太平洋公園】看海景。",
+        rain: "鐵道文化園區有多棟室內木造展館可避雨參觀。",
+        map: "花蓮鐵道文化園區"
+      },
+      {
+        time: "18:15–20:00",
+        title: "晚餐：欣欣麵館（澎湃海鮮）或 東大門夜市",
+        isFood: true,
+        sunny: "「欣欣麵館」（民國路）以滿滿現流海鮮、龍蝦湯與生魚片聞名；餐後可散步逛步道寬敞的東大門夜市。",
+        rain: "欣欣麵館為室內餐廳，照常享用。",
+        map: "花蓮欣欣麵館"
+      }
+    ]
+  },
+  {
+    day: 7,
+    date: "12/16 (三)",
+    city: "花蓮 ➔ 羅東 ➔ 礁溪",
+    theme: "林業古蹟、傳藝老街與礁溪美人湯",
+    transport: "台鐵北迴線 ＋ 羅東租機車/台灣好行",
+    hotel: "礁溪溫泉飯店（房內獨立美人湯）",
+    newSpot: "國立傳統藝術中心、礁溪湯圍溝溫泉公園",
+    slots: [
+      {
+        time: "08:50–10:20",
+        title: "台鐵北迴線：花蓮站 ➔ 羅東站",
+        sunny: "搭乘台鐵自強號（約1小時10分）穿過蘇花改隧道群，輕鬆抵達宜蘭羅東車站，於站前租機車並寄放行李。",
+        rain: "宜蘭冬季若遇微雨，可不租機車，直接在羅東後站搭乘「台灣好行冬山河線」或計程車移動。",
+        map: "羅東火車站"
+      },
+      {
+        time: "10:20–11:50",
+        title: "羅東林業文化園區",
+        sunny: "騎車5分鐘即達。沿著平緩的貯木池環池木棧道散步，參觀竹林車站、森林鐵路蒸汽火車與日式木造宿舍群。",
+        rain: "園區內有多棟室內林業展示館與「森藝館」（義美吉盛咖啡館）可避雨看池景。",
+        map: "羅東林業文化園區"
+      },
+      {
+        time: "11:50–13:00",
+        title: "午餐：林場肉羹 ＆ 羅東紅豆湯圓",
+        isFood: true,
+        sunny: "就在林業園區正對面。品嚐滿滿肉片與筍絲的古早味肉羹，再去中山路吃碗熱騰騰的紅豆湯圓。",
+        rain: "室內店面，照常享用。",
+        map: "羅東林場肉羹"
+      },
+      {
+        time: "13:00–16:00",
+        title: "國立傳統藝術中心（宜蘭傳藝園區）",
+        isNew: true,
+        sunny: "騎車約15分鐘抵達。漫步文昌街、魯班街紅磚拱廊，參觀黃舉人宅、廣孝堂，14:00欣賞廟埕或曲藝館的傳統戲曲表演。",
+        rain: "自帶完美遮雨屬性：整排閩南紅磚街屋皆有寬敞「亭仔腳（騎樓）」與室內劇場，下雨逛起來完全不狼狽；亦可替換為【金車噶瑪蘭威士忌酒廠】。",
+        map: "宜蘭傳統藝術中心"
+      },
+      {
+        time: "16:00–17:15",
+        title: "羅東還車 ➔ 台鐵區間車至礁溪站",
+        sunny: "騎回羅東站還車，搭乘台鐵區間車（僅需20分鐘）抵達礁溪火車站，步行至溫泉飯店辦理入住。",
+        rain: "正常搭乘台鐵。",
+        map: "礁溪火車站"
+      },
+      {
+        time: "17:15–18:30",
+        title: "礁溪湯圍溝溫泉公園 ＆ 奕順軒伴手禮",
+        isNew: true,
+        sunny: "步行漫遊湯圍溝公園，在日式檜木涼亭下免費泡溫泉足湯，順道去「奕順軒」採買奶凍捲與三星蔥麵包。",
+        rain: "湯圍溝設有「有屋頂遮雨的溫泉泡腳亭」，下雨依然能暖呼呼泡腳。",
+        map: "湯圍溝溫泉公園"
+      },
+      {
+        time: "18:30–20:30",
+        title: "晚餐：里海咖啡（鮮魚料理）或 礁溪甕窯雞",
+        isFood: true,
+        sunny: "「里海咖啡」（需預約）專賣每日漁港直送的鹽烤與醬燒鮮魚定食，環境極為文青優雅；飯後回飯店泡獨立溫泉池。",
+        rain: "室內餐廳，照常享用。",
+        map: "礁溪里海咖啡"
+      }
+    ]
+  },
+  {
+    day: 8,
+    date: "12/17 (四)",
+    city: "礁溪 ➔ 台北",
+    theme: "淡水古蹟、紅樓午宴與大稻埕歲月",
+    transport: "葛瑪蘭/首都客運 ＋ 雙北捷運（免騎車）",
+    hotel: "台北市區（近台北車站或中山站）",
+    newSpot: "大稻埕霞海城隍廟、台北記憶倉庫",
+    slots: [
+      {
+        time: "09:00–10:10",
+        title: "國道客運：礁溪轉運站 ➔ 台北轉運站",
+        sunny: "搭乘葛瑪蘭或首都客運（走雪山隧道，約55分鐘）直達台北車站。今日在台北全程搭捷運，免租機車最輕鬆。",
+        rain: "國道客運直達台北轉運站室內大樓，完全淋不到雨。",
+        map: "台北轉運站"
+      },
+      {
+        time: "10:30–12:15",
+        title: "淡水紅毛城、英國領事官邸 ＆ 小白宮",
+        sunny: "搭捷運淡水信義線至淡水站，轉紅26公車（5分鐘）抵達紅毛城與小白宮，在百年紅磚迴廊看觀音山與淡水河口。",
+        rain: "若遇台北冬季大雨，捷運坐到「士林站」轉公車上【國立故宮博物院（北部院區）】，全天在室內看國寶。",
+        map: "淡水紅毛城"
+      },
+      {
+        time: "12:15–14:00",
+        title: "午餐：淡水紅樓中餐廳",
+        isFood: true,
+        sunny: "從紅毛城步行8分鐘至淡水老街半山腰的1899年百年洋樓「淡水紅樓」。在3樓室內景觀座位品嚐創意台菜，免去老街人擠人。",
+        rain: "若走故宮北院雨備，則直接於院區內的【故宮晶華】享用港式點心。",
+        map: "淡水紅樓中餐廳"
+      },
+      {
+        time: "14:00–15:00",
+        title: "淡水金色水岸散步 ＆ 新建成餅店",
+        sunny: "沿著平緩的河濱步道散步回淡水捷運站，買老牌阿給、新建成芝麻蛋黃大餅。",
+        rain: "直接搭捷運返回台北市區。",
+        map: "淡水金色水岸"
+      },
+      {
+        time: "15:00–17:30",
+        title: "大稻埕迪化街 ＆ 台北霞海城隍廟",
+        isNew: true,
+        sunny: "搭捷運至雙連站或北門站。漫步迪化街巴洛克紅磚老屋，參拜【霞海城隍廟】，並於「滋養和菓子」享用現烤銅鑼燒配熱茶。",
+        rain: "迪化街全線皆有相連的百年亭仔腳（騎樓），下雨也能全程不撐傘乾爽逛完南北貨與中藥行。",
+        map: "台北霞海城隍廟"
+      },
+      {
+        time: "17:30–18:30",
+        title: "北門廣場 ＆ 台北記憶倉庫",
+        isNew: true,
+        sunny: "往南步行至北門（承恩門），參觀對面的紅磚古蹟【台北記憶倉庫】（週四開放至18:00）與鐵道部園區建築外觀。",
+        rain: "台北記憶倉庫為室內展館，結束後直接走進北門捷運站地下街。",
+        map: "台北記憶倉庫"
+      },
+      {
+        time: "18:30–20:30",
+        title: "晚餐：欣葉台菜（南西店）",
+        isFood: true,
+        sunny: "搭捷運至中山站，於新光三越南西店內享用米其林推薦的「欣葉台菜」（煎豬肝、菜脯蛋、杏仁豆腐），環境舒適體面。",
+        rain: "百貨公司與捷運連通，完全不受風雨影響。",
+        map: "欣葉台菜南西店"
+      }
+    ]
+  },
+  {
+    day: 9,
+    date: "12/18 (五)",
+    city: "台北 ➔ 桃園大溪",
+    theme: "百年老茶廠、慈湖與木藝古蹟群",
+    transport: "台鐵自強號 ＋ 中壢前站租機車/台灣好行",
+    hotel: "桃園大溪或中壢市區",
+    newSpot: "慈湖紀念雕塑公園、大溪木藝生態博物館群",
+    slots: [
+      {
+        time: "08:50–09:50",
+        title: "台鐵移動：台北站 ➔ 中壢站租車",
+        sunny: "搭乘台鐵自強號（約38分鐘）抵達中壢車站，於前站租機車並寄放行李。",
+        rain: "若下雨不租機車，可搭台灣好行501大溪快線，或轉桃園捷運至青埔（A18高鐵桃園站）。",
+        map: "中壢火車站"
+      },
+      {
+        time: "10:30–12:30",
+        title: "大溪老茶廠（含 11:00 定時導覽）",
+        sunny: "騎車約35分鐘抵達。11:00跟隨導覽認識1926年日治製茶機械、老檜木萎凋槽，在靜水池與藍灰色窗櫺拍合照（門票150元可抵100元買茶）。",
+        rain: "老茶廠為兩層樓大型室內建築，雨天在館內品茗極有韻味；青埔雨備則可逛【桃園市立兒童美術館】與【Xpark水族館】。",
+        map: "大溪老茶廠"
+      },
+      {
+        time: "12:30–13:45",
+        title: "午餐：大溪老茶廠茶書屋 或 百年油飯",
+        isFood: true,
+        sunny: "可直接在老茶廠室內「茶書屋」享用苦茶油拌麵線套餐；或騎車10分鐘下山至大溪老街吃「游記百年油飯」與「老阿伯現滷豆干」。",
+        rain: "於老茶廠室內茶書屋用餐，免奔波。",
+        map: "老阿伯現滷豆干"
+      },
+      {
+        time: "13:45–15:00",
+        title: "慈湖紀念雕塑公園",
+        isNew: true,
+        sunny: "從老茶廠下山途中順遊（距離茶廠僅5分鐘車程）。整修後重新開放的慈湖園區步道極為平緩，欣賞慈湖湖光山色、拱橋與天鵝。",
+        rain: "若下雨則略過慈湖，直接前往大溪老街室內木博館群。",
+        map: "慈湖紀念雕塑公園"
+      },
+      {
+        time: "15:00–17:30",
+        title: "大溪老街 ＆ 大溪木藝生態博物館群",
+        isNew: true,
+        sunny: "騎車10分鐘抵達大溪普濟路。免費參觀一整排修復完善的日式古蹟：【壹號館、大溪武德殿、四連棟】（開放至17:00），再逛和平路巴洛克老街。",
+        rain: "木藝生態博物館共有十餘棟室內歷史館舍可供入內參觀，大溪老街亦有完整巴洛克騎樓遮雨。",
+        map: "大溪木藝生態博物館壹號館"
+      },
+      {
+        time: "17:30–19:30",
+        title: "返回中壢市區 ＆ 晚餐：新明老牌牛肉麵",
+        isFood: true,
+        sunny: "騎車25分鐘返回中壢市區飯店入住。晚餐品嚐中壢名店「新明老牌牛肉麵」或「永川牛肉麵」，或選精緻客家菜館。",
+        rain: "室內餐廳，照常享用。",
+        map: "中壢新明老牌牛肉麵"
+      }
+    ]
+  },
+  {
+    day: 10,
+    date: "12/19 (六)",
+    city: "中壢 ➔ 新竹 ➔ 台中",
+    theme: "百年州廳、玻工館與完美賦歸",
+    transport: "台鐵自強號 ＋ 新竹站租機車/步行",
+    hotel: "溫暖的家（台中）",
+    newSpot: "新竹州廳（國定古蹟）、新竹市美術館＆東門城",
+    slots: [
+      {
+        time: "09:00–10:10",
+        title: "中壢還車 ➔ 台鐵至新竹火車站",
+        sunny: "搭乘台鐵自強號（約28分鐘）抵達1913年完工的巴洛克古蹟【新竹火車站】。將行李寄放站內置物櫃，於站前租機車（或步行搭配計程車）。",
+        rain: "正常搭乘台鐵，新竹舊城區集中，雨天搭計程車移動僅需約100元。",
+        map: "新竹火車站"
+      },
+      {
+        time: "10:10–12:00",
+        title: "新竹公園（麗池園林、玻璃工藝博物館）",
+        sunny: "騎車5分鐘抵達。漫步日式麗池九曲橋、湖畔料亭木造建築群，並參觀【新竹市立玻璃工藝博物館】（全票50元）與「春室 Glass Studio」。",
+        rain: "玻璃工藝博物館與春室咖啡館皆為室內空間，可看玻璃吹製並喝咖啡避雨。",
+        map: "新竹市立玻璃工藝博物館"
+      },
+      {
+        time: "12:00–13:45",
+        title: "午餐：新竹都城隍廟 ＆ 廟口鴨香飯",
+        isFood: true,
+        sunny: "騎車6分鐘至城隍廟商圈。先吃中山路「廟口鴨香飯」（煙燻鴨肉配半熟蛋，有2樓室內座），再到城隍廟內吃郭家潤餅、海瑞貢丸湯。",
+        rain: "鴨香飯有室內座位，城隍廟小吃攤位全數位於廟宇室內大棚下，完全淋不到雨。",
+        map: "新竹廟口鴨香飯"
+      },
+      {
+        time: "13:45–15:30",
+        title: "新竹州廳、新竹市美術館 ＆ 東門城",
+        isNew: true,
+        sunny: "距離城隍廟步行僅5分鐘。欣賞1927年和洋混合風格的【新竹州廳】、紅磚古蹟【新竹市美術館】（免費看展），散步至【東門城（迎曦門）】，順道在「RT Baker House」或「淵明餅鋪」買水蒸蛋糕。",
+        rain: "改去新竹市美術館室內看展，或前往【Big City 遠東巨城購物中心】喝下午茶休息。",
+        map: "新竹市美術館"
+      },
+      {
+        time: "15:30–17:25",
+        title: "新竹還車取行李 ➔ 台鐵返回台中站",
+        sunny: "15:30回到新竹火車站還車領行李，搭乘16:15台鐵自強號（約1小時10分）返回台中火車站，平安完成10天9夜台灣環島之旅！",
+        rain: "平安返抵台中溫暖的家。",
+        map: "台中火車站"
+      }
+    ]
+  }
+];
+
+
+// ===== 美食卡片資料（左右滑動） =====
+const F = (tag, name, desc, hours, map) => ({ tag, name, desc, hours, map });
+
+const foodPatch = {
+  // Day 1 嘉義
+  "1:3": {
+    title: "午餐：嘉義在地小吃",
+    foods: [
+      F("午餐", "民主火雞肉飯", "嘉義火雞肉飯代表之一，累積近萬則評論，店面寬敞。", "", "嘉義民主火雞肉飯"),
+      F("午餐", "郭家雞肉飯", "文化路夜市周邊，營業時間長，半夜也吃得到。", "", "嘉義郭家雞肉飯"),
+      F("午餐", "阿岸米糕", "嘉義限定的米糕滋味。", "", "嘉義阿岸米糕"),
+      F("午餐", "羅山鱔魚麵", "文化路夜市周邊的在地鱔魚麵。", "", "嘉義羅山鱔魚麵"),
+      F("點心", "涼麵四味果汁", "必吃加白醋的鹹甜涼麵，搭配四種水果果汁。", "", "嘉義四味果汁涼麵")
+    ]
+  },
+  "1:7": {
+    title: "晚餐：文化路夜市一帶",
+    foods: [
+      F("晚餐", "林聰明沙鍋魚頭", "嘉義美食代表，就在文化路周邊。原行程建議先用官方 LINE 抽號碼牌。", "", "林聰明沙鍋魚頭"),
+      F("晚餐", "阿龍土魠魚羹", "文化路夜市必吃名單之一。", "", "嘉義阿龍土魠魚羹"),
+      F("點心", "阿娥豆漿豆花", "用豆漿取代糖水的古早味豆花，可搭油條沾著吃。", "13:30–23:30（週二休）", "嘉義阿娥豆漿豆花"),
+      F("點心", "大陸妹共匪餅", "甜、鹹兩種口味的外省小點心，鹹的包蘿蔔絲、高麗菜與荷包蛋。", "14:00–18:30", "嘉義大陸妹共匪餅"),
+      F("飲料", "源興御香屋", "招牌紅鑽葡萄柚綠茶，每口都吃得到葡萄柚果肉。", "", "嘉義源興御香屋"),
+      F("點心", "北回水晶餃", "只有嘉義才吃得到的特色小吃。", "", "嘉義北回水晶餃")
+    ]
+  },
+
+  // Day 2 台南
+  "2:2": {
+    title: "午餐：中西區小吃",
+    foods: [
+      F("午餐", "邱家小卷米粉", "小卷彈脆、湯頭帶海味清甜，熱門時段常要排隊，建議早點到。", "11:00–17:00（週一休）", "臺南市中西區國華街三段251號 邱家小卷米粉"),
+      F("點心", "金得春捲", "國華街一帶的代表小吃，春捲份量不小、甜鹹交織。", "07:00–17:00（週二休）", "臺南市中西區民族路三段19號 金得春捲")
+    ]
+  },
+  "2:5": {
+    title: "晚餐：安平小吃",
+    foods: [
+      F("晚餐", "阿財牛肉湯", "湯頭清甜，附一碗飯，有隱藏版五花肉牛肉湯。", "老店 11:00–01:00", "台南安平阿財牛肉湯 古堡街5號"),
+      F("晚餐", "文章牛肉湯", "招牌牛肉湯與綜合牛肉湯，湯頭清爽。下午 14:00–17:00 休息備料。", "全天營業（週一 14:00 起至週二 17:00 公休）", "台南文章牛肉湯 安平路590號"),
+      F("晚餐", "肋仔牛肉湯", "家傳三代，牛骨香的清甜湯頭搭牛肉燥飯。", "週三至日 04:30–21:00（週二休）", "台南安平肋仔牛肉湯 安平路624號"),
+      F("晚餐", "孫家小卷米粉", "安平老街的小卷米粉，曾被日本美食雜誌報導。", "", "台南孫家小卷米粉 安平路97-3號"),
+      F("晚餐", "松霖鍋燒始府", "鍋燒意麵，有多種湯頭可選。", "11:00–21:00（週三休）", "台南松霖鍋燒始府 安北路425號"),
+      F("點心", "周氏蝦捲", "1965 年開業的炸蝦捲老店，也有肉燥飯、擔仔麵、魚丸湯。", "總店 10:00–21:30", "台南周氏蝦捲 安平路408-1號"),
+      F("點心", "同記安平豆花", "白豆花、竹炭黑豆花、鮮奶豆花，也有雪花冰與粉圓冰。", "總店 09:00–23:00", "台南同記安平豆花 安北路433號")
+    ]
+  },
+
+  // Day 3 高雄
+  "3:2": {
+    title: "棧貳庫搭渡輪 ➔ 旗津・鹽埕午餐",
+    note: "從棧貳庫或鼓山輪渡站連人帶機車搭渡輪（航程約10分鐘）至旗津，順遊旗津彩虹教堂。",
+    foods: [
+      F("午餐", "萬二小吃部", "旗津的平價海鮮熱炒店。", "", "旗津萬二小吃部"),
+      F("午餐", "阿忠米粉湯", "鹽埕 60 年老店，虱目魚粗米粉湯，招牌另有清燙小卷與炸小卷蛋。沒有招牌，循著騎樓下人潮找。", "06:30 開始營業", "高雄鹽埕阿忠米粉湯"),
+      F("點心", "婆婆冰", "鹽埕老字號古早味剉冰，花生、芋頭、紅豆是人氣配料。", "", "高雄鹽埕婆婆冰")
+    ]
+  },
+  "3:5": {
+    title: "晚餐：鹽埕・愛河一帶",
+    foods: [
+      F("晚餐", "鴨肉珍", "鹽埕鴨肉飯老店，鴨肉鹹香軟嫩、滷汁入味。", "", "高雄鴨肉珍"),
+      F("晚餐", "愛河小吃店", "前金區，主打飽滿多汁的煎餃。", "", "高雄前金愛河小吃店"),
+      F("晚餐", "新咖哩", "鹽埕的日式清爽咖哩，炸雞排、炸豬排外酥內實。", "", "高雄鹽埕新咖哩")
+    ]
+  },
+
+  // Day 4 台東
+  "4:2": {
+    title: "午餐：知本・太麻里沿線",
+    note: "太麻里沿線我沒有查到可靠的店家資料，建議當天用 Google 地圖搜尋「太麻里 午餐」，或回知本再吃。",
+    foods: [
+      F("午餐", "黑松羊肉爐", "知本溫泉區一帶的在地羊肉爐名店。", "", "知本黑松羊肉爐")
+    ]
+  },
+  "4:5": {
+    title: "晚餐：夜市與知本溫泉街",
+    note: "週日 17:00–22:00，台東鐵花新聚落有微光集市集與原住民駐唱，可順路逛。",
+    foods: [
+      F("晚餐", "四維夜市", "只在週日開市，是台東規模最大的夜市。必吃：林家專業炸雞、倆倆雞蛋糕、豚豚食堂、D.i.y 小泡芙本鋪。", "週日限定", "台東四維夜市"),
+      F("晚餐", "知本龍泉路溫泉街", "入夜後像小型夜市，泡完湯散步覓食，還有迷你溫泉煮蛋槽。", "", "知本龍泉路溫泉街"),
+      F("晚餐", "榕樹下米苔目", "台東市區的在地小吃，列在台東精選美食名單中。", "", "台東榕樹下米苔目")
+    ]
+  },
+
+  // Day 5 池上
+  "5:2": {
+    title: "午餐：池上・關山",
+    foods: [
+      F("午餐", "悟饕池上飯包文化故事館", "在復古火車廂裡吃正宗池上便當。", "", "悟饕池上飯包文化故事館"),
+      F("午餐", "全美行池上便當", "池上鄉中正路1號，就在車站附近。", "", "池上全美行便當 中正路1號"),
+      F("午餐", "家鄉池上便當", "池上鄉中正路4號，車站旁的池上便當名店。", "", "池上家鄉便當 中正路4號"),
+      F("午餐", "關山臭豆腐", "在關山公有零售市場內，臭豆腐外酥內嫩，也賣陽春麵、滷味。", "09:00–16:00（週四休）", "關山公有零售市場 關山臭豆腐"),
+      F("點心", "大池豆皮店", "台東唯一的豆皮工廠，古法柴燒豆皮、豆花、豆漿。週末午後常賣完，建議早點去。", "週三公休", "池上大池豆皮店"),
+      F("點心", "福原豆腐", "池上手工香豆腐，現炸外酥內嫩，搭自製泡菜。", "", "池上福原豆腐")
+    ]
+  },
+  "5:5": {
+    title: "晚餐：池上鄉",
+    foods: [
+      F("晚餐", "池上翠華小館", "客家菜為主，有客家小炒、梅干扣肉、薑絲炒大腸、客家白斬雞、老菜脯雞。", "", "池上翠華小館"),
+      F("晚餐", "197風味餐", "原住民料理，有野菜鍋、石板烤肉、小米粽，烤雞烤魚需事先預約。", "11:00–14:00、17:00–20:00（週二休）", "池上197風味餐"),
+      F("晚餐", "吉本肉圓", "在地清蒸肉圓，可搭四神湯。", "", "池上吉本肉圓")
+    ]
+  },
+
+  // Day 6 花蓮
+  "6:2": {
+    title: "午餐：花蓮市區・吉安",
+    foods: [
+      F("午餐", "液香扁食", "超過 70 年的老店，只賣一味扁食湯，每碗十顆、皮薄餡多。", "", "花蓮液香扁食 信義街42號"),
+      F("午餐", "楊媽媽米粉羹", "大同市場 30 多年老店，湯頭清爽、肉燥香，素食粥也是招牌。", "07:00–13:00", "花蓮大同市場楊媽媽米粉羹"),
+      F("午餐", "公正包子", "花蓮市仁愛街的包子老店。", "", "花蓮公正包子 仁愛街46號"),
+      F("午餐", "周家蒸餃小籠包", "現包現做，小籠包偏包子口感、肉汁多。", "24 小時營業", "花蓮周家蒸餃"),
+      F("午餐", "來來小籠包", "美崙一帶的小籠包店，一籠八顆。", "", "花蓮美崙來來小籠包")
+    ]
+  },
+  "6:6": {
+    title: "晚餐：花蓮市區",
+    foods: [
+      F("晚餐", "欣欣麵館", "民國路，以現撈海鮮、龍蝦火鍋聞名。", "", "花蓮欣欣麵館"),
+      F("晚餐", "東大門夜市", "東台灣規模最大的夜市，超過 400 個攤位，有在地小吃與異國美食。", "", "花蓮東大門夜市"),
+      F("晚餐", "耕壽司", "花蓮高 CP 值的平價壽司與生魚片。", "", "花蓮耕壽司")
+    ]
+  },
+
+  // Day 7 羅東・礁溪
+  "7:2": {
+    title: "午餐：羅東",
+    foods: [
+      F("午餐", "張秀雄米苔目", "羅東天津路的老店米苔目，配料簡單、湯頭清爽，也有粉腸。", "", "羅東張秀雄米苔目 天津路5-9號"),
+      F("午餐", "上品佑食堂", "炸蛋魯肉飯與炸豬排是必點，中午常排隊。", "11:00–19:30（週四休）", "羅東上品佑食堂 復興路二段111號"),
+      F("點心", "羅東碳烤燒餅", "在地人激推的胡椒餅，常有人排隊。", "", "羅東碳烤燒餅 南門路32號"),
+      F("點心", "財記臭豆腐", "羅東的臭豆腐名店。", "", "羅東財記臭豆腐")
+    ]
+  },
+  "7:6": {
+    title: "晚餐：礁溪（或在羅東還車後先吃）",
+    note: "原行程的里海咖啡週三公休，12/16 當天不營業，已移除。",
+    foods: [
+      F("晚餐", "玉仁八寶冬粉（2號店）", "配料豐富的八寶冬粉。", "06:00–21:00", "礁溪玉仁八寶冬粉 中山路二段131號"),
+      F("晚餐", "正好鮮肉小籠包", "薄皮湯包、湯汁豐富，礁溪火車站附近的分店。", "10:30–14:00、16:00–19:00（週日休）", "礁溪正好鮮肉小籠包 仁愛路122號"),
+      F("晚餐", "小春礁溪店", "宜蘭特色糕渣與卜肉。", "平日 16:00–23:00", "礁溪小春 德陽路口"),
+      F("晚餐", "來益漁行", "漁行轉型的海鮮料理。", "16:00–21:00（週一休）", "礁溪來益漁行 中山路二段106號"),
+      F("宵夜", "玉田烤香腸", "礁溪的鐵串烤香腸，很多人回程會買，可搭大蒜。", "", "礁溪玉田烤香腸 玉民路一段229-1號"),
+      F("羅東・先吃", "一鑫園", "羅東夜市旁，鮮蚵滷肉飯是招牌，蝦仁燒賣也是人氣必點。可在還車後、搭車前先吃。", "11:00–14:00、17:00–20:00", "羅東一鑫園")
+    ]
+  },
+
+  // Day 8 台北
+  "8:2": {
+    title: "午餐：淡水老街一帶",
+    foods: [
+      F("午餐", "淡水文化阿給", "老字號阿給，真理街 6-4 號。", "", "淡水文化阿給 真理街6-4號"),
+      F("午餐", "福又又淡水魚丸", "30 年老字號魚丸。", "", "淡水福又又魚丸"),
+      F("午餐", "林記肉圓", "巷弄內的肉圓，淋甜味米漿，可搭腸肚綜合湯。", "12:00–21:00（週三休）", "淡水林記肉圓 水源街一段122巷37號"),
+      F("午餐", "蒸美味小籠湯包", "真理大學附近，現蒸薄皮鮮肉湯包。離淡水捷運站步行約 20 分鐘。", "", "淡水蒸美味小籠湯包"),
+      F("午餐", "淡大旁無名蒸餃", "手工蒸餃，首推韭菜口味。需搭公車（紅27、308、756）到淡江大學，下車步行約 2 分鐘。", "", "淡江大學 無名蒸餃")
+    ]
+  },
+  "8:6": {
+    title: "晚餐：大稻埕一帶",
+    note: "以下集中在大稻埕、迪化街一帶，可在逛完北門後折返，或在迪化街行程中順路先吃。另有一家 80 年、曾獲米其林必比登推薦的老麵店，我沒查到店名，可現場詢問。",
+    foods: [
+      F("晚餐", "大稻埕滷肉飯", "入選雙十國宴菜色的滷肉飯。", "", "大稻埕滷肉飯"),
+      F("晚餐", "大稻埕碼頭貨櫃市集", "17 家美食攤位進駐，河畔露天座位，有台灣小吃與異國料理。", "週一至五 16:00–22:00", "大稻埕碼頭貨櫃市集")
+    ]
+  },
+
+  // Day 9 大溪・中壢
+  "9:2": {
+    title: "午餐：大溪老街",
+    foods: [
+      F("午餐", "老阿伯現滷豆干", "中正路上的現滷豆干，可配黃金蛋與其他滷味。假日需預留候位時間。", "", "大溪老阿伯現滷豆干"),
+      F("午餐", "林家老川味牛肉麵", "中正路 43 號，藥膳湯頭、牛肉軟嫩、麵條 Q 彈。", "11:00–18:30（週三休）", "大溪林家老川味牛肉麵 中正路43號"),
+      F("午餐", "游記百年油飯", "大溪市場飄香一甲子以上的老油飯。", "", "大溪游記百年油飯"),
+      F("點心", "黃大目豆干", "大溪豆干名店，適合邊逛老街邊吃。", "", "大溪黃大目豆干"),
+      F("點心", "賴媽媽豆花", "老字號豆花，滑嫩綿密，可配花生、紅豆、珍珠。", "", "大溪賴媽媽豆花")
+    ]
+  },
+  "9:5": {
+    title: "晚餐：中壢市區",
+    note: "騎車 25 分鐘返回中壢市區飯店入住。",
+    foods: [
+      F("晚餐", "張家鍋貼水餃", "韭菜鍋貼與水餃，點了才現煎。", "週二至五 11:00–14:00、16:30–20:00（週一、六、日休）", "中壢張家鍋貼水餃 新興路223號"),
+      F("晚餐", "四海飄香鍋貼水餃（站前總店）", "手工鍋貼、水餃、乾麵與湯品。", "10:00–21:00（週三休）", "中壢四海飄香鍋貼水餃 中和路142號"),
+      F("晚餐", "1981 Cafe", "越南料理與越南咖啡，有河內牛肉河粉、河內烤肉麵。", "週一至五 11:00–23:00；週六日 10:00–23:00", "中壢1981 Cafe 元化路2-36號"),
+      F("晚餐", "劉家現做潤餅", "巨無霸潤餅，有多種口味。", "12:00–22:00（週二、隔週三休）", "中壢劉家現做潤餅 中和路124號"),
+      F("點心", "興南越南法國麵包", "現做現烤的越南法國麵包，自製豬肝醬。", "07:00–20:00（週一休）", "中壢興南越南法國麵包 中山東路一段3號")
+    ]
+  },
+
+  // Day 10 新竹
+  "10:2": {
+    title: "午餐：新竹城隍廟商圈",
+    foods: [
+      F("午餐", "廟口鴨香飯", "中山路 142 號，煙燻鴨肉配半熟蛋，拌著蛋黃吃。有二樓座位。", "週四至一 11:00–15:00、15:30–21:00（週二三休）", "新竹廟口鴨香飯"),
+      F("午餐", "柳家肉燥飯", "城隍廟口老攤，肉燥飯加酸菜與香菜提味。", "", "新竹城隍廟柳家肉燥飯"),
+      F("午餐", "阿城號米粉", "經營 80 多年的城隍廟老攤，新竹米粉與摃丸湯。", "", "新竹城隍廟阿城號米粉"),
+      F("午餐", "連家阿婆小吃", "招牌蛋酥魷魚羹，也可點米粉加炒麵雙吃。", "", "新竹城隍廟連家阿婆小吃"),
+      F("午餐", "鄭家魚丸燕圓", "城隍廟的老字號魚丸攤。", "", "新竹城隍廟鄭家魚丸"),
+      F("午餐", "林家肉圓", "新竹三大小吃之一的肉圓。", "", "新竹城隍廟林家肉圓"),
+      F("點心", "郭家元祖潤餅", "城隍廟人氣潤餅，常有人排隊。", "", "新竹郭家元祖潤餅"),
+      F("點心", "周家燒麻糬", "超大顆的燒麻糬。", "", "新竹城隍廟周家燒麻糬"),
+      F("點心", "林家芋泥球", "整顆塞滿芋泥的甜點。", "", "新竹城隍廟林家芋泥球")
+    ]
+  }
+};
+
+Object.keys(foodPatch).forEach(key => {
+  const [dayStr, idxStr] = key.split(":");
+  const d = itineraryData.find(x => x.day === parseInt(dayStr, 10));
+  const s = d.slots[parseInt(idxStr, 10)];
+  const p = foodPatch[key];
+  s.title = p.title;
+  s.note = p.note || "";
+  s.foods = p.foods;
+  s.isFood = true;
+  delete s.sunny;
+  delete s.rain;
+  delete s.map;
+});
+
+function renderFoodCards(foods) {
+  const cards = foods.map(f => `
+    <div class="food-card">
+      <span class="food-tag">${f.tag}</span>
+      <div class="food-name">${f.name}</div>
+      <div class="food-desc">${f.desc}</div>
+      ${f.hours ? `<div class="food-hours">🕒 ${f.hours}</div>` : ''}
+      <a class="food-map" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.map)}" target="_blank" rel="noopener">📍 開啟地圖</a>
+    </div>
+  `).join('');
+  return `
+    <div class="food-hint">👉 左右滑動，看有哪些可以吃（共 ${foods.length} 間）</div>
+    <div class="food-scroll">${cards}</div>
+  `;
+}
+
+const packingItems = [
+  "身分證 ＋ 普通重型機車駕照（租機車必備！）",
+  "健保卡、信用卡、適量現金與悠遊卡/一卡通",
+  "防風防水衝鋒外套（騎車擋風擋微雨極重要）",
+  "輕羽絨背心或內裡、保暖脖圍、防風手套",
+  "自備安全帽內襯墊（租車衛生又保暖）",
+  "個人常備藥品、眼藥水、酸痛貼布",
+  "泳衣與泳帽（知本、礁溪溫泉飯店大眾池備用）",
+  "手機充電線、行動電源、輕便折疊傘"
+];
+
+let currentDay = 1;
+let weatherMode = 'all'; // 'all', 'sunny', 'rain'
+let isLargeFont = false;
+let checkedSlots = JSON.parse(localStorage.getItem('tw_trip_checked_slots') || '{}');
+let checkedPack = JSON.parse(localStorage.getItem('tw_trip_checked_pack') || '{}');
+
+function initApp() {
+  renderDayTabs();
+  renderDayContent(currentDay);
+  renderPackingList();
+  setupPWA();
+}
+
+function renderDayTabs() {
+  const container = document.getElementById('dayTabs');
+  container.innerHTML = itineraryData.map(d => `
+    <div class="day-tab ${d.day === currentDay ? 'active' : ''}" onclick="selectDay(${d.day})" id="tab-day-${d.day}">
+      <span class="d-num">Day ${d.day}</span>
+      <span class="d-loc">${d.date.split(' ')[0]} ${d.city.split('➔')[1].trim()}</span>
+    </div>
+  `).join('');
+}
+
+function selectDay(dayNum) {
+  currentDay = dayNum;
+  document.querySelectorAll('.day-tab').forEach(el => el.classList.remove('active'));
+  const activeTab = document.getElementById(`tab-day-${dayNum}`);
+  if (activeTab) {
+    activeTab.classList.add('active');
+    activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }
+  renderDayContent(dayNum);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderDayContent(dayNum) {
+  const d = itineraryData.find(item => item.day === dayNum);
+  const container = document.getElementById('dayContent');
+
+  const slotsHtml = d.slots.map((s, idx) => {
+    const slotKey = `d${d.day}_s${idx}`;
+    const isChecked = !!checkedSlots[slotKey];
+
+    const showSunny = weatherMode === 'all' || weatherMode === 'sunny';
+    const showRain = weatherMode === 'all' || weatherMode === 'rain';
+
+    return `
+      <div class="slot-card ${isChecked ? 'checked' : ''}" id="card-${slotKey}">
+        <div class="slot-header">
+          <span class="time-pill">🕒 ${s.time}</span>
+          <button class="check-btn" onclick="toggleSlotCheck('${slotKey}')">
+            ${isChecked ? '✓ 已完成' : '○ 標記完成'}
+          </button>
+        </div>
+        <div class="slot-title">
+          ${s.isNew ? '<span class="tag-new">🌟 新增必訪</span>' : ''}
+          ${s.isFood ? '<span class="tag-food">🍴 嚴選美食</span>' : ''}
+          <span>${s.title}</span>
+        </div>
+        ${s.foods ? `
+          ${s.note ? `<div class="slot-note">${s.note}</div>` : ''}
+          ${renderFoodCards(s.foods)}
+        ` : `
+          ${showSunny ? `<div class="sunny-box">☀️ ${s.sunny}</div>` : ''}
+          ${showRain ? `<div class="rain-box"><strong>☔ 雨備無縫切換：</strong>${s.rain}</div>` : ''}
+          <div class="slot-actions">
+            <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.map)}" target="_blank" rel="noopener">
+              📍 開啟 Google 地圖導航（${s.map}）
+            </a>
+          </div>
+        `}
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="day-banner">
+      <h2>Day ${d.day}｜${d.date}：${d.city}</h2>
+      <div style="font-weight:600;color:#475569;">主題：${d.theme}</div>
+      <div class="day-meta">
+        <span class="badge badge-train">🚆 交通：${d.transport}</span>
+        <span class="badge badge-hotel">🏨 住宿：${d.hotel}</span>
+        <span class="badge badge-star">🌟 新增亮點：${d.newSpot}</span>
+      </div>
+    </div>
+    <div class="timeline">
+      ${slotsHtml}
+    </div>
+  `;
+}
+
+function toggleSlotCheck(slotKey) {
+  checkedSlots[slotKey] = !checkedSlots[slotKey];
+  localStorage.setItem('tw_trip_checked_slots', JSON.stringify(checkedSlots));
+  renderDayContent(currentDay);
+}
+
+function setWeatherMode(mode) {
+  weatherMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById(`mode-${mode}`).classList.add('active');
+  renderDayContent(currentDay);
+}
+
+function toggleFontSize() {
+  isLargeFont = !isLargeFont;
+  document.documentElement.style.setProperty('--font-scale', isLargeFont ? '1.18' : '1');
+  const btn = document.getElementById('fontBtn');
+  btn.classList.toggle('active', isLargeFont);
+  btn.innerHTML = isLargeFont ? '🔍 標準字' : '🔍 大字版';
+}
+
+function switchView(viewName) {
+  ['itinerary', 'status', 'prep'].forEach(v => {
+    document.getElementById(`view-${v}`).classList.toggle('hidden', v !== viewName);
+    document.getElementById(`nav-${v}`).classList.toggle('active', v === viewName);
+  });
+  document.getElementById('itineraryControls').classList.toggle('hidden', viewName !== 'itinerary');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderPackingList() {
+  const container = document.getElementById('packingList');
+  container.innerHTML = packingItems.map((item, idx) => {
+    const isChecked = !!checkedPack[idx];
+    return `
+      <label class="checklist-item">
+        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="togglePackCheck(${idx})">
+        <span style="${isChecked ? 'text-decoration:line-through;color:#94a3b8;' : ''}">${item}</span>
+      </label>
+    `;
+  }).join('');
+}
+
+function togglePackCheck(idx) {
+  checkedPack[idx] = !checkedPack[idx];
+  localStorage.setItem('tw_trip_checked_pack', JSON.stringify(checkedPack));
+  renderPackingList();
+}
+
+function setupPWA() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+  if (navigator.storage && navigator.storage.persist) {
+    navigator.storage.persist().catch(() => {});
+  }
+}
+
+window.addEventListener('DOMContentLoaded', initApp);
+</script>
+</body>
+</html>
